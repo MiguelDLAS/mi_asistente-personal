@@ -1,22 +1,38 @@
 import speech_recognition as sr 
 import pyttsx3
+import pywhatkit
 
+name = 'jarvis'
 listener = sr.Recognizer()
 
 engine = pyttsx3.init()
 
 voices = engine.getProperty('voices')
-engine.setProperty('voice', voices[1].id)
+engine.setProperty('voice', voices[0].id)
 
-engine.say("buenos dias")
-engine.runAndWait()
+def talk(text):
+    engine.say(text)
+    engine.runAndWait()
 
-try:
-    with sr.Microphone() as source:
-        print("escuchando...")
-        voice  = listener.listen(source)
-        rec = listener.recognize_google(voice)
-        print(rec)
+def listen():
+    try:
+        with sr.Microphone() as source:
+             print("escuchando...")
+             voice  = listener.listen(source)
+             rec = listener.recognize_google(voice)
+             rec = rec.lower()
+             if name in rec:
+                rec = rec.replace(name, '')
+                print(rec)
+    except:
+        pass
+    return rec
 
-except:
-    pass
+def run():
+    rec = listen()
+    if 'reproduce' in rec:
+        music = rec.replace('reproduce', '')
+        talk('reproduciendo ' + music)
+        pywhatkit.playonyt(music)
+
+run()
